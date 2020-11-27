@@ -1,0 +1,49 @@
+<div class="container">
+
+      <mat-form-field class="example-full-width" style="width:300px">
+        <input type="text"
+               placeholder="Kontrahent"
+               matInput
+               (keyup)="kontrahenciFilter($event)"
+               [formControl]="my2Control"
+               [matAutocomplete]="auto2"
+               
+               >
+
+        <mat-autocomplete #auto2="matAutocomplete">
+          <mat-option 
+            *ngFor="let optiona of filteredKontrahenci" 
+            [value]="optiona"
+            (click)="selectKontrahent(optiona)"
+            >
+            {{optiona | kontrahentToString}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <br/><br/>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Wyszukaj Produkt</mat-label>
+        <input matInput
+          (keyup)="searchProdukt()"
+          [(ngModel)]="produktyInput"
+        >
+      </mat-form-field>
+
+      <mat-list #produktylist>
+        <mat-list-item *ngFor="let item of produkty">
+            <button 
+              style="min-width:200px"
+              mat-button 
+              [value]="item"
+              (click)="addProdukt(item)"
+              >
+              {{item.nazwa}} &nbsp;&nbsp;&nbsp; {{item.cena_netto}}zł/{{item.jednostka}} 
+            </button>
+            
+          
+          
+        </mat-list-item>
+      </mat-list>
+</div>
