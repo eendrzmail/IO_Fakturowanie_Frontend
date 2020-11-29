@@ -1,5 +1,7 @@
 <div class="container">
 
+      <button (click)="testsend()">Send</button>
+
       <mat-form-field class="example-full-width" style="width:300px">
         <input type="text"
                placeholder="Kontrahent"
@@ -23,7 +25,7 @@
 
       <br/><br/>
 
-      <mat-form-field class="example-full-width">
+      <mat-form-field class="example-full-width" style="width:300px">
         <mat-label>Wyszukaj Produkt</mat-label>
         <input matInput
           (keyup)="searchProdukt()"
@@ -31,7 +33,7 @@
         >
       </mat-form-field>
 
-      <mat-list #produktylist>
+      <mat-list #produktylist style="height:400px;overflow-y: auto;">
         <mat-list-item *ngFor="let item of produkty">
             <button 
               style="min-width:200px"
@@ -46,4 +48,83 @@
           
         </mat-list-item>
       </mat-list>
+</div>
+<div class="container2">
+
+  <h2>Podgląd</h2>
+
+  <div class="data_wystawienia" style="display:flex;">
+    <h3>Data wystawienia:</h3>
+    <mat-form-field appearance="fill">
+      <mat-label>Wybierz datę</mat-label>
+      <input matInput [matDatepicker]="picker" [formControl]="dataControl">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div class="kontrahenci" style="display:flex;justify-content: space-around;width:100%">
+
+    <div class="sprzedawca">
+      <h3>Sprzedawca</h3>
+      <div class="nabywca" *ngIf="k!=null">
+        {{faktura.sprzedajacy.nazwa}}<br/>
+        {{faktura.sprzedajacy.adres}}<br/>
+        NIP: {{faktura.sprzedajacy.NIP}}
+      </div>
+    </div>
+
+    <div class="nabywca">
+      <h3>Nabywca:</h3>
+      <div class="nabywca" *ngIf="k!=null">
+        {{faktura.kupujacy.nazwa}}<br/>
+        {{faktura.kupujacy.adres}}<br/>
+        NIP: {{faktura.kupujacy.NIP}}
+      </div>
+    </div>
+  </div>
+
+  <div class="tabelka" style="margin-top:30px">
+    <table>
+      <tr>
+        <th>Nazwa</th><th>ilość</th><th>jednostka</th><th>Cena netto</th><th>VAT</th><th>Kwota netto</th><th>Kwota VAT</th><th>Kwota brutto</th>
+      </tr>
+
+      <tr>
+        <td colspan="8"><hr/></td>
+      </tr>
+
+      <tr *ngFor="let wiersz of faktura.wiersze; let i =index ">
+        <td>{{wiersz.produkt.nazwa}}</td>
+        <td><input type="number" name="produkt{{i}}" value={{wiersz.ilosc}} (keyup)="zmienIlosc(wiersz,$event.target.value)"></td>
+        <td>{{wiersz.produkt.jednostka}}</td>
+        <td>{{wiersz.produkt.cena_netto}}</td>
+        <td>{{wiersz.produkt.wartosc_VAT}}% </td>
+        <td>{{wiersz.wartosc_netto}} zł</td>
+        <td>{{wiersz.wartosc_vat}} zł</td>
+        <td>{{wiersz.wartosc_brutto}} zł</td>
+      </tr>
+
+      <tr>
+        <td colspan="8"><hr/></td>
+      </tr>
+
+      <tr>
+        <td>Razem</td><td></td><td></td><td><td></td>
+        <td>{{faktura.suma_netto}} zł</td>
+        <td>{{faktura.suma_vat}} zł</td>
+        <td>{{faktura.suma_brutto}} zł</td>
+      </tr>
+      
+    </table>
+  </div>
+
+  <div>
+    Data sprzedazy
+    status
+    forma_platnosci
+    data_platnosci
+  </div>
+  <button (click)="sendFaktura()">Wyślij</button>
+
 </div>

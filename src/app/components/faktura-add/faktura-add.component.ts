@@ -7,6 +7,9 @@ import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith, subscribeOn, switchMap, tap} from 'rxjs/operators';
 import { KontrahentToStringPipe } from '../../pipes/kontrahent-to-string.pipe';
+import { Faktura } from 'src/app/dataModels/Faktura';
+import { wierszFaktury } from 'src/app/dataModels/wierszFaktury';
+
 
 
 @Component({
@@ -22,12 +25,17 @@ export class FakturaAddComponent implements OnInit {
   kontrahenci: Array<Kontrahent>;
   filteredKontrahenci: Kontrahent[];
   k: Kontrahent;
+  sprzedajacy:Kontrahent = {nazwa:"Nasza firma",adres: "Rzeszów 112",NIP: "0000000001"};
 
   produkty: Array<Produkt>;
   produktyInput:string;
-  produktyFaktura: Array<Produkt>;
+  produktyFaktura: Array<Produkt> = [];
 
   my2Control = new FormControl();
+  dataControl= new FormControl();
+
+  ///
+  faktura:Faktura= new Faktura;
 
 
   ngOnInit() {
@@ -37,6 +45,13 @@ export class FakturaAddComponent implements OnInit {
       this.kontrahenci=ret;
       this.filteredKontrahenci=ret;
       //console.table(this.kontrahenci);
+
+
+      this.faktura.sprzedajacy={id:1,nazwa:"Nasza firma",adres: "Rzeszów 112",NIP: "0000000001"};
+
+      this.dataControl.valueChanges.subscribe(ret => {
+        this.faktura.data_wystawienia=ret;
+      })
     })
     
 
@@ -72,7 +87,8 @@ export class FakturaAddComponent implements OnInit {
   selectKontrahent(value: Kontrahent){
     this.k=value;
     this.my2Control.setValue(value.nazwa);
-    console.dir(this.k);
+    this.faktura.kupujacy=this.k;
+    //console.dir(this.k);
   }
 
   searchProdukt(){
@@ -84,6 +100,31 @@ export class FakturaAddComponent implements OnInit {
 
   addProdukt(item: Produkt){
     this.produktyFaktura.push(item);
+    this.faktura.wiersze.push(new wierszFaktury(item,1));
+    this.faktura.podsumuj();
+  }
+
+
+  testsend(){
+    let a: Kontrahent= {nazwa:"zenek",adres:"adress",NIP:"1234567890"};
+    this.httpService.sendKontrahent(a).subscribe(ret =>
+      console.log(ret)
+      );
+  }
+
+  zmienIlosc(wiersz:wierszFaktury,val: number){
+    //console.log(val);
+    wiersz.zmienIlosc(val);
+    this.faktura.podsumuj();
+    console.dir(this.faktura);
+  }
+
+  sendFaktura(){
+    if (this.faktura.wiersze.length>0 && this.faktura.kupujacy && this.faktura.sprzedajacy){
+      this.httpService.sendFaktura(this.faktura).subscribe((ret) => {
+        console.dir(ret);
+      })
+    }
   }
 
 }
