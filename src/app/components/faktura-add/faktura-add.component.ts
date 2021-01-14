@@ -41,6 +41,8 @@ export class FakturaAddComponent implements OnInit {
   statusinput= new FormControl();
   formainput= new FormControl();
 
+  knipcontrol = new FormControl();
+
   ///
   faktura:Faktura= new Faktura;
   fakturavalidator=true;
@@ -204,13 +206,30 @@ export class FakturaAddComponent implements OnInit {
 
 
 
-
+  getKontrahentByNip(nip){
+    this.httpService.getKontrahenciByNIP(nip).subscribe(ret => {
+      console.dir(ret);
+      this.k=ret;
+      this.faktura.kupujacy=this.k;
+      //console.dir(this.k);
+      this.fvalidator();
+    })
+  }
 
 
 
 
 
   inputListeners(){
+
+    this.knipcontrol.valueChanges.subscribe(ret => {
+      //tu na 10
+      if (ret.length==2) {
+        console.log("wyszukuje po nipie");
+        this.getKontrahentByNip(ret);
+      }
+    })
+
     // DATA WYSTAWIENIA
     this.dataControl.valueChanges.subscribe(ret => {
       this.faktura.data_wystawienia=ret;

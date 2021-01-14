@@ -3,6 +3,16 @@
       <button mat-raised-button routerLink="" style="width:50%;margin-bottom:45px">Wróć</button>
 
       <mat-form-field class="example-full-width" style="width:300px">
+        <input type="text" 
+            matInput 
+            placeholder="NIP kontrahenta"
+            [formControl]="knipcontrol"
+        
+        >
+      </mat-form-field>
+
+      <!--
+      <mat-form-field class="example-full-width" style="width:300px">
         <input type="text"
                placeholder="Kontrahent"
                matInput
@@ -22,6 +32,7 @@
           </mat-option>
         </mat-autocomplete>
       </mat-form-field>
+      -->
 
       <br/><br/>
 

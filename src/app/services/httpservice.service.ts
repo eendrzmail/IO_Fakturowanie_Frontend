@@ -7,6 +7,7 @@ import { Produkt } from '../dataModels/Produkt';
 import { map } from 'rxjs/operators';
 import { of, from } from 'rxjs';
 import { wierszFaktury } from '../dataModels/wierszFaktury';
+import { KontrahentToStringPipe } from '../pipes/kontrahent-to-string.pipe';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ import { wierszFaktury } from '../dataModels/wierszFaktury';
 export class HttpserviceService {
 
   kontrahenciAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/kontrahenci';
+  kontrahenciAPI2: string = "https://5fbe1e625923c90016e6a866.mockapi.io/api/kontrahenci2/"
   //local
   localKontrahenciAPI: string = 'https://inz-opr.herokuapp.com/kontrahenci';//'https://5fbe1e625923c90016e6a866.mockapi.io/api/localhontrahenci'
 
@@ -36,6 +38,23 @@ export class HttpserviceService {
 
   getKontrahenciByName(name: string):Observable<Kontrahent[]>{
     return this.http.get<Kontrahent[]>(this.kontrahenciAPI+`?nazwa=${name}`);
+  }
+
+  getKontrahenciByNIP(nip: string):Observable<Kontrahent>{
+
+    return this.http.get<any>(this.kontrahenciAPI2+`/${nip}`)
+      .pipe(
+        map(k => {
+          let temp:Kontrahent=new Kontrahent;
+          console.dir(k);
+          // pousuwac 0 potem
+          temp.nazwa=k.Nazwa;
+          temp.NIP=k.NIP;
+          temp.adres=k.Adres;
+
+          return temp;
+        })
+      );
   }
 
 

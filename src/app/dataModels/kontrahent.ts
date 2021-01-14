@@ -1,4 +1,4 @@
-export interface Kontrahent{
+export class Kontrahent{
     id?: number;
     nazwa: string;
     adres: string;
