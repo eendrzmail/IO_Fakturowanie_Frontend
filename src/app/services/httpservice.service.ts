@@ -19,6 +19,8 @@ export class HttpserviceService {
   produktyAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/produkty';
 
   fakturyAPI='http://127.0.0.1:3000/faktury';
+  fakturyAPI2='http://localhost:3000/faktury';
+  
 
   constructor(private http:HttpClient) { }
 
@@ -92,6 +94,36 @@ export class HttpserviceService {
     )
   }
 
+  getFakturaByDate(date: Date):Observable<Faktura[]> {
+    //et a=date.g
+    let q="?data=\""+date.getFullYear()+"-"+(+date.getMonth()+1)+"-"+date.getDate()+"\"";
+    //console.log(q);
+    return this.http.get<Faktura[]>(this.fakturyAPI+q)
+    .pipe(
+      map(faktury => {
+        faktury.map(result => {
+
+          console.dir(result);
+
+          let temp:Faktura=new Faktura;
+          let temp2= Object.assign(temp,result);
+
+          for (let i in result.wiersze){
+            //console.dir(result.wiersze[i].produkt);
+            let tempwiersz:wierszFaktury =new wierszFaktury(result.wiersze[i].produkt,result.wiersze[i].ilosc);
+            temp2.wiersze[i] = tempwiersz;
+          }
+
+          temp2.podsumuj();
+          return temp2;
+
+        })
+        
+        return faktury;
+      })
+    )
+  }
+
   sendKontrahent(a:Kontrahent){
     /*
     const params= new HttpParams()
@@ -132,5 +164,12 @@ export class HttpserviceService {
     const headers = { 'content-type': 'application/json',responseType: 'json'}  
     const body = JSON.stringify({"object":JSON.stringify(f)});
     return this.http.post("http://localhost:3000/faktury",body,{'headers': headers});
+  }
+
+  updateFaktura(f:Faktura){
+    //console.log("PUT");
+    const headers = { 'content-type': 'application/json',responseType: 'json'}  
+    const body = JSON.stringify({"object":JSON.stringify(f)});
+    return this.http.put(this.fakturyAPI,body,{'headers': headers});
   }
 }

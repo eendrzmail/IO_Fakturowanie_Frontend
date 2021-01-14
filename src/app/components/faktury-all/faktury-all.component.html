@@ -1,33 +1,48 @@
-<section>
+<section style="display:flex;flex-direction: row;">
 
-    <div class="szukajnip">
+    <div>
+        <button mat-raised-button style="width:50%;" routerLink="/"> Wróć</button>
         <h3>Szukaj faktur</h3>
-        <mat-form-field class="example-full-width" style="width:300px">
-            <input type="text"
-                   placeholder="Wybierz kontrahenta"
-                   matInput
-                   (keyup)="kontrahenciFilter()"
-                   [formControl]="kontrahentinput"
-                   [matAutocomplete]="auto2"
-                   
-                   >
-    
-            <mat-autocomplete #auto2="matAutocomplete">
-              <mat-option 
-                *ngFor="let optiona of filteredKontrahenci" 
-                [value]="optiona"
-                (click)="selectKontrahent(optiona)"
-                >
-                {{optiona | kontrahentToString}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
+        <div class="szukajnip">
+            
+            <mat-form-field class="example-full-width" style="width:300px">
+                <input type="text"
+                    placeholder="Wybierz kontrahenta"
+                    matInput
+                    (keyup)="kontrahenciFilter()"
+                    [formControl]="kontrahentinput"
+                    [matAutocomplete]="auto2"
+                    
+                    >
+        
+                <mat-autocomplete #auto2="matAutocomplete">
+                <mat-option 
+                    *ngFor="let optiona of filteredKontrahenci" 
+                    [value]="optiona"
+                    (click)="selectKontrahent(optiona)"
+                    >
+                    {{optiona | kontrahentToString}}
+                </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div>
+        lub
+        <div class="szukajdata">
+            <mat-form-field >
+                <mat-label>Wybierz datę</mat-label>
+                <input matInput [matDatepicker]="picker" [formControl]="datepicker">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+
 
     </div>
+    
     <div>
         <table class="faktury">
             <tr>
-                <th>Nr. Faktury</th><th>Kontrahent</th><th>Status</th><th>Data wystawienia</th>
+                <th>Nr. Faktury</th><th>Kontrahent</th><th>Status</th><th>Data wystawienia</th><th></th>
             </tr>
             <tr *ngFor="let faktura of this.faktury" routerLink="/faktura/{{faktura.nr_faktury}}" target="_blank">
                 <td>
@@ -42,6 +57,7 @@
                 <td>
                     {{faktura.data_wystawienia | date:"shortDate":'':'pl-PL'}}
                 </td>
+                <td *ngIf="faktura.status=='Edytowalna'"><button mat-raised-button routerLink="/edytuj/{{faktura.nr_faktury}}">Edytuj</button></td>
             </tr>
         </table>
     </div>

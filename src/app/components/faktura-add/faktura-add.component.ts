@@ -79,6 +79,10 @@ export class FakturaAddComponent implements OnInit {
     else if (this.my2Control.value.length == 1 ) {
       this.httpService.getKontrahenciByName(this.my2Control.value).subscribe(ret => {
         let temp:Kontrahent[]= ret;
+        
+        for (let l of this.localkontrahenci){
+          temp=temp.filter(k => {return k.NIP!=l.NIP});
+        }
 
         this.kontrahenci=[];
         this.kontrahenci.push(...this.localkontrahenci);

@@ -1,6 +1,8 @@
 <div class="container">
 
+    <button mat-raised-button routerLink="/" style="width:50%;margin-bottom:45px">Strona główna</button>
     <button *ngIf="faktura" mat-raised-button routerLink="/faktura/{{faktura.nr_faktury}}" style="width:50%;margin-bottom:45px">Wróć</button>
+    
 
     <!--
     <mat-form-field class="example-full-width" style="width:300px">

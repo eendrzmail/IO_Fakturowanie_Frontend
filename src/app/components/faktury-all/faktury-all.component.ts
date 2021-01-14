@@ -21,6 +21,7 @@ export class FakturyAllComponent implements OnInit {
   k: Kontrahent;
 
   kontrahentinput= new FormControl();
+  datepicker= new FormControl();
 
   faktury= Array<Faktura>();
 
@@ -32,11 +33,21 @@ export class FakturyAllComponent implements OnInit {
       this.filteredKontrahenci=ret;
     })
 
+    this.datepicker.valueChanges.subscribe(val => {
+      //console.log(val);
+      this.getfakturybydate(val);
+    })
+
   }
 
 
 
-
+  getfakturybydate(val){
+    this.httpservice.getFakturaByDate(val).subscribe(ret => {
+      this.faktury=ret;
+      console.dir(ret);
+    })
+  }
   getfakturynip(nip){
     this.httpservice.getFakturaByNIP(nip).subscribe(ret => {
       //console.dir(ret);

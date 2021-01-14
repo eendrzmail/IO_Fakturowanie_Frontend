@@ -17,7 +17,10 @@ import { Produkt } from 'src/app/dataModels/Produkt';
 })
 export class FakturaEditComponent implements OnInit {
 
-  constructor(private route: ActivatedRoute, private httpservice: HttpserviceService) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private httpservice: HttpserviceService,
+    private router: Router) { }
 
   produkty: Array<Produkt>;
   produktyInput:string;
@@ -143,6 +146,15 @@ export class FakturaEditComponent implements OnInit {
 
   updateFaktura(){
     console.dir(this.faktura);
+    this.httpservice.updateFaktura(this.faktura).subscribe(ret => {
+      let a:any=ret;
+      if (a.status=="ok"){
+        this.router.navigate(['/faktura/'+this.faktura.nr_faktury]);
+      }
+      else{
+
+      }
+    })
   }
 
 }
