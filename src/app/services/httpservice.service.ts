@@ -14,11 +14,13 @@ import { wierszFaktury } from '../dataModels/wierszFaktury';
 export class HttpserviceService {
 
   kontrahenciAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/kontrahenci';
-  localKontrahenciAPI: string = 'http://localhost:3000/kontrahenci';//'https://5fbe1e625923c90016e6a866.mockapi.io/api/localhontrahenci'
+  //local
+  localKontrahenciAPI: string = 'https://inz-opr.herokuapp.com/kontrahenci';//'https://5fbe1e625923c90016e6a866.mockapi.io/api/localhontrahenci'
 
   produktyAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/produkty';
 
-  fakturyAPI='http://127.0.0.1:3000/faktury';
+  //local
+  fakturyAPI='https://inz-opr.herokuapp.com/faktury';
   fakturyAPI2='http://localhost:3000/faktury';
   
 
@@ -131,7 +133,8 @@ export class HttpserviceService {
     */
     const headers = { 'content-type': 'application/json',responseType: 'text'}  
     const body = JSON.stringify({"object":JSON.stringify(a)});
-    return this.http.post("http://localhost:3000/kontrahenci",body,{'headers': headers});
+    return this.http.post(this.localKontrahenciAPI,body,{'headers': headers});
+
     //return this.http.get('http://localhost:3000/kontrahenci');
     /*
     return new Promise((resolve,reject) => {
@@ -163,7 +166,7 @@ export class HttpserviceService {
   sendFaktura(f:Faktura){
     const headers = { 'content-type': 'application/json',responseType: 'json'}  
     const body = JSON.stringify({"object":JSON.stringify(f)});
-    return this.http.post("http://localhost:3000/faktury",body,{'headers': headers});
+    return this.http.post(this.fakturyAPI,body,{'headers': headers});
   }
 
   updateFaktura(f:Faktura){
