@@ -1,6 +1,6 @@
 <div class="container">
 
-      <button (click)="testsend()">Send</button>
+      <button mat-raised-button routerLink="" style="width:50%;margin-bottom:45px">Wróć</button>
 
       <mat-form-field class="example-full-width" style="width:300px">
         <input type="text"
@@ -49,15 +49,16 @@
         </mat-list-item>
       </mat-list>
 </div>
+<!--                                    FAKTURA                                      -->
 <div class="container2">
 
   <h2>Podgląd</h2>
 
-  <div class="data_wystawienia" style="display:flex;">
+  <div class="data_wystawienia" style="display:flex;width:100%;justify-content: center;">
     <h3>Data wystawienia:</h3>
     <mat-form-field appearance="fill">
       <mat-label>Wybierz datę</mat-label>
-      <input matInput [matDatepicker]="picker" [formControl]="dataControl">
+      <input matInput [matDatepicker]="picker" [formControl]="dataControl" required>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
@@ -87,21 +88,26 @@
   <div class="tabelka" style="margin-top:30px">
     <table>
       <tr>
-        <th>Nazwa</th><th>ilość</th><th>jednostka</th><th>Cena netto</th><th>VAT</th><th>Kwota netto</th><th>Kwota VAT</th><th>Kwota brutto</th>
+        <th></th><th>Nazwa</th><th>ilość</th><th>jednostka</th><th>Cena netto</th><th>VAT</th><th>Kwota netto</th><th>Kwota VAT</th><th>Kwota brutto</th>
       </tr>
 
       <tr>
         <td colspan="8"><hr/></td>
       </tr>
 
-      <tr *ngFor="let wiersz of faktura.wiersze; let i =index ">
-        <td>{{wiersz.produkt.nazwa}}</td>
-        <td><input type="number" name="produkt{{i}}" value={{wiersz.ilosc}} (keyup)="zmienIlosc(wiersz,$event.target.value)"></td>
-        <td>{{wiersz.produkt.jednostka}}</td>
-        <td>{{wiersz.produkt.cena_netto}}</td>
-        <td>{{wiersz.produkt.wartosc_VAT}}% </td>
-        <td>{{wiersz.wartosc_netto}} zł</td>
-        <td>{{wiersz.wartosc_vat}} zł</td>
+      <tr *ngFor="let wiersz of faktura.wiersze; let i = index " >
+        <td>
+          <button mat-raised-button (click)="removeItem(wiersz)"> Usuń</button>
+        </td>
+        <td class="border">{{wiersz.produkt.nazwa}}</td>
+        <td class="border">
+          <input type="number"  name="produkt{{i}}" value={{wiersz.ilosc}} (keyup)="zmienIlosc(wiersz,$event.target.value)" (click)="zmienIlosc(wiersz,$event.target.value)">
+        </td>
+        <td class="border">{{wiersz.produkt.jednostka}}</td>
+        <td class="border">{{wiersz.produkt.cena_netto}}</td>
+        <td class="border">{{wiersz.produkt.wartosc_VAT}}% </td>
+        <td class="border">{{wiersz.wartosc_netto}} zł</td>
+        <td class="border">{{wiersz.wartosc_vat}} zł</td>
         <td>{{wiersz.wartosc_brutto}} zł</td>
       </tr>
 
@@ -117,14 +123,89 @@
       </tr>
       
     </table>
+    <hr/>
   </div>
 
-  <div>
-    Data sprzedazy
-    status
-    forma_platnosci
-    data_platnosci
-  </div>
-  <button (click)="sendFaktura()">Wyślij</button>
+  <table>
+
+    <tr>
+      <td>
+        <h3>Data Sprzedaży:</h3>
+      </td>
+      <td>
+        <mat-form-field appearance="fill">
+          <mat-label>Wybierz datę</mat-label>
+          <input matInput [matDatepicker]="picker2" [formControl]="data_sprzedazy_control" required style="width:100%">
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <h3>Status:</h3>
+      </td>
+      <td>
+        <mat-form-field appearance="fill">
+          <input type="text"
+          placeholder="Wybierz status"
+          matInput
+          [formControl]="statusinput"
+          [matAutocomplete]="status"
+          style="min-width:200px">
+          <mat-autocomplete #status="matAutocomplete">
+           <mat-option *ngFor="let option of ['Edytowalna','Wystawiona']" [value]="option" required>
+             {{option}}
+           </mat-option>
+         </mat-autocomplete>
+        </mat-form-field>
+        
+      </td>
+    </tr>
+
+    <tr>
+
+      <td>
+        <h3>Forma płatności:</h3>
+      </td>
+      <td>
+        <mat-form-field appearance="fill">
+          <input type="text"
+          placeholder="Wybierz płatność"
+          matInput
+          [formControl]= "formainput"
+          [matAutocomplete]="forma"
+          style="min-width:200px">
+          <mat-autocomplete #forma="matAutocomplete">
+           <mat-option *ngFor="let option of ['gotówka','karta']" [value]="option">
+             {{option}}
+           </mat-option>
+         </mat-autocomplete>
+        </mat-form-field>
+        
+      </td>
+    
+    </tr>
+
+    <tr>
+
+      <td>
+        <h3>Data płatności:</h3>
+      </td>
+      <td>
+        <mat-form-field appearance="fill">
+          <mat-label>Wybierz datę</mat-label>
+          <input matInput [matDatepicker]="picker3" [formControl]="data_platnosci_control" style="width:100%;">
+          <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+          <mat-datepicker #picker3></mat-datepicker>
+        </mat-form-field>
+      </td>
+    </tr>
+
+  </table>
+
+
+  <button mat-raised-button (click)="sendFaktura()" [disabled]="fakturavalidator"> Wyślij</button>
 
 </div>

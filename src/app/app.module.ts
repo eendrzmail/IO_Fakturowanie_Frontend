@@ -21,6 +21,10 @@ import {MatNativeDateModule} from '@angular/material';
 
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import { TestComponent } from './components/test/test.component';
+import { MainpageComponent } from './components/mainpage/mainpage.component';
+import { FakturyAllComponent } from './components/faktury-all/faktury-all.component';
+import { FakturaComponent } from './components/faktura/faktura.component';
+import { FakturaEditComponent } from './components/faktura-edit/faktura-edit.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +32,11 @@ import { TestComponent } from './components/test/test.component';
     NavComponent,
     FakturaAddComponent,
     KontrahentToStringPipe,
-    TestComponent
+    TestComponent,
+    MainpageComponent,
+    FakturyAllComponent,
+    FakturaComponent,
+    FakturaEditComponent
   ],
   imports: [
     BrowserModule,

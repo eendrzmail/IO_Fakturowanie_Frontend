@@ -14,7 +14,7 @@ import { wierszFaktury } from '../dataModels/wierszFaktury';
 export class HttpserviceService {
 
   kontrahenciAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/kontrahenci';
-  localKontrahenciAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/localhontrahenci'
+  localKontrahenciAPI: string = 'http://localhost:3000/kontrahenci';//'https://5fbe1e625923c90016e6a866.mockapi.io/api/localhontrahenci'
 
   produktyAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/produkty';
 
@@ -23,6 +23,9 @@ export class HttpserviceService {
   constructor(private http:HttpClient) { }
 
   // GET
+  getLocalSelf():Observable<Kontrahent> {
+    return this.http.get<Kontrahent>(this.localKontrahenciAPI+"/self");
+  }
   getLocalKontrahenciByName(name: string):Observable<Kontrahent[]>{
     return this.http.get<Kontrahent[]>(this.localKontrahenciAPI);
   }
@@ -31,10 +34,18 @@ export class HttpserviceService {
     return this.http.get<Kontrahent[]>(this.kontrahenciAPI+`?nazwa=${name}`);
   }
 
-  getProduktyByName(name: string):Observable<Produkt[]>{
-    return this.http.get<Produkt[]>(this.produktyAPI+`?nazwa=${name}`);
+
+
+  getProduktyByName(name: string,nip?: string):Observable<Produkt[]>{
+    console.log("Podano nip:"+nip);
+    let q= `?nazwa=${name}`;
+    if (nip){
+      q+=`&nip=${nip}`;
+    }
+    return this.http.get<Produkt[]>(this.produktyAPI+q);
   }
 
+  //        FAKTURA
   getFakturaByNr(nr:string):Observable<Faktura>{
     return this.http.get<Faktura>(this.fakturyAPI+`?nr_faktury=${nr}`)
     .pipe(
@@ -52,6 +63,33 @@ export class HttpserviceService {
         return temp2;
       })
     );
+  }
+
+  getFakturaByNIP(nip):Observable<Faktura[]> {
+    return this.http.get<Faktura[]>(this.fakturyAPI+`?nip=${nip}`)
+    .pipe(
+      map(faktury => {
+        faktury.map(result => {
+
+          console.dir(result);
+
+          let temp:Faktura=new Faktura;
+          let temp2= Object.assign(temp,result);
+
+          for (let i in result.wiersze){
+            //console.dir(result.wiersze[i].produkt);
+            let tempwiersz:wierszFaktury =new wierszFaktury(result.wiersze[i].produkt,result.wiersze[i].ilosc);
+            temp2.wiersze[i] = tempwiersz;
+          }
+
+          temp2.podsumuj();
+          return temp2;
+
+        })
+        
+        return faktury;
+      })
+    )
   }
 
   sendKontrahent(a:Kontrahent){

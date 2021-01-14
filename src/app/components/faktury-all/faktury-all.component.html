@@ -1,0 +1,49 @@
+<section>
+
+    <div class="szukajnip">
+        <h3>Szukaj faktur</h3>
+        <mat-form-field class="example-full-width" style="width:300px">
+            <input type="text"
+                   placeholder="Wybierz kontrahenta"
+                   matInput
+                   (keyup)="kontrahenciFilter()"
+                   [formControl]="kontrahentinput"
+                   [matAutocomplete]="auto2"
+                   
+                   >
+    
+            <mat-autocomplete #auto2="matAutocomplete">
+              <mat-option 
+                *ngFor="let optiona of filteredKontrahenci" 
+                [value]="optiona"
+                (click)="selectKontrahent(optiona)"
+                >
+                {{optiona | kontrahentToString}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+    </div>
+    <div>
+        <table class="faktury">
+            <tr>
+                <th>Nr. Faktury</th><th>Kontrahent</th><th>Status</th><th>Data wystawienia</th>
+            </tr>
+            <tr *ngFor="let faktura of this.faktury" routerLink="/faktura/{{faktura.nr_faktury}}" target="_blank">
+                <td>
+                    {{faktura.nr_faktury}}
+                </td>
+                <td>
+                    {{faktura.kupujacy.nazwa}}
+                </td>
+                <td>
+                    {{faktura.status}}
+                </td>
+                <td>
+                    {{faktura.data_wystawienia | date:"shortDate":'':'pl-PL'}}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</section>

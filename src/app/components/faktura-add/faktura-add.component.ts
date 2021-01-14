@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Kontrahent } from 'src/app/dataModels/kontrahent';
 import { Produkt } from 'src/app/dataModels/Produkt';
 import { HttpserviceService } from 'src/app/services/httpservice.service';
+import { Router} from '@angular/router';
 
-import {FormControl} from '@angular/forms';
+import {FormControl,Validators} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith, subscribeOn, switchMap, tap} from 'rxjs/operators';
 import { KontrahentToStringPipe } from '../../pipes/kontrahent-to-string.pipe';
@@ -19,7 +20,9 @@ import { wierszFaktury } from 'src/app/dataModels/wierszFaktury';
 })
 export class FakturaAddComponent implements OnInit {
 
-  constructor(private httpService: HttpserviceService) { }
+  constructor(
+    private httpService: HttpserviceService,
+    private router: Router) { }
 
   localkontrahenci: Array<Kontrahent>;
   kontrahenci: Array<Kontrahent>;
@@ -33,13 +36,23 @@ export class FakturaAddComponent implements OnInit {
 
   my2Control = new FormControl();
   dataControl= new FormControl();
+  data_sprzedazy_control= new FormControl();
+  data_platnosci_control=new FormControl();
+  statusinput= new FormControl();
+  formainput= new FormControl();
 
   ///
   faktura:Faktura= new Faktura;
+  fakturavalidator=true;
 
 
   ngOnInit() {
-
+    //pobierz swoja firme lokalnie
+    this.httpService.getLocalSelf().subscribe(self => {
+      console.dir(self);
+      this.faktura.sprzedajacy=self;
+    })
+    // pobierz lokalnych kontrahentow
     this.httpService.getLocalKontrahenciByName("").subscribe(ret => {
       this.localkontrahenci=ret;
       this.kontrahenci=ret;
@@ -47,13 +60,13 @@ export class FakturaAddComponent implements OnInit {
       //console.table(this.kontrahenci);
 
 
-      this.faktura.sprzedajacy={id:1,nazwa:"Nasza firma",adres: "Rzeszów 112",NIP: "0000000001"};
+      //this.faktura.sprzedajacy={id:1,nazwa:"Nasza firma",adres: "Rzeszów 112",NIP: "0000000001"};
 
-      this.dataControl.valueChanges.subscribe(ret => {
-        this.faktura.data_wystawienia=ret;
-      })
+      
     })
-    
+
+
+    this.inputListeners();
 
   }
 
@@ -89,22 +102,34 @@ export class FakturaAddComponent implements OnInit {
     this.my2Control.setValue(value.nazwa);
     this.faktura.kupujacy=this.k;
     //console.dir(this.k);
+    this.fvalidator();
   }
 
+  //pobranie produktow z api
   searchProdukt(){
     //console.log(this.produktyInput);
-    this.httpService.getProduktyByName(this.produktyInput).subscribe( (ret) =>{
-      this.produkty=ret;
-    })
+    if (this.k!=undefined) {
+      this.httpService.getProduktyByName(this.produktyInput,this.k.NIP).subscribe( (ret) =>{
+        this.produkty=ret;
+      })
+    }
+    else {
+      this.httpService.getProduktyByName(this.produktyInput).subscribe( (ret) =>{
+        this.produkty=ret;
+      })
+    }
+      
   }
 
   addProdukt(item: Produkt){
     this.produktyFaktura.push(item);
     this.faktura.wiersze.push(new wierszFaktury(item,1));
     this.faktura.podsumuj();
+    this.fvalidator();
   }
 
 
+  //----
   testsend(){
     let a: Kontrahent= {nazwa:"zenek",adres:"adress",NIP:"1234567890"};
     this.httpService.sendKontrahent(a).subscribe(ret =>
@@ -113,18 +138,111 @@ export class FakturaAddComponent implements OnInit {
   }
 
   zmienIlosc(wiersz:wierszFaktury,val: number){
-    //console.log(val);
+    console.log(val);
     wiersz.zmienIlosc(val);
     this.faktura.podsumuj();
     console.dir(this.faktura);
+    this.fvalidator();
   }
+
+  removeItem(item:wierszFaktury){
+    console.dir(item);
+    this.faktura.wiersze=this.faktura.wiersze.filter( ob => {return ob!=item});
+    this.fvalidator();
+  }
+
+
+
+  // Walidator
+  fvalidator(){
+    //if (this.faktura.wiersze.length>0 && this.faktura.kupujacy && this.faktura.sprzedajacy && )
+    this.fakturavalidator= !(
+                            this.faktura.wiersze.length>0 && 
+                            this.faktura.kupujacy!=undefined && 
+                            this.faktura.sprzedajacy!=undefined &&
+                            this.faktura.data_wystawienia &&
+                            this.faktura.data_sprzedazy
+                            );
+    console.log(this.fakturavalidator);
+  }
+
 
   sendFaktura(){
     if (this.faktura.wiersze.length>0 && this.faktura.kupujacy && this.faktura.sprzedajacy){
+      if (!this.faktura.status){
+        this.faktura.status="Edytowalna";
+        console.log("Zamieniam status");
+      }
+
+      
       this.httpService.sendFaktura(this.faktura).subscribe((ret) => {
-        console.dir(ret);
+        //console.dir(ret);
+        let nr:any=ret;
+        if (nr.nr_faktury){
+          console.log(nr.nr_faktury);
+          this.router.navigate(['/faktura/'+nr.nr_faktury]);
+        }
+        else{
+          console.log("cos innego");
+        }
       })
+      
     }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  inputListeners(){
+    // DATA WYSTAWIENIA
+    this.dataControl.valueChanges.subscribe(ret => {
+      this.faktura.data_wystawienia=ret;
+      //
+      //this.faktura.data_sprzedazy=ret;
+      //this.faktura.data_platnosci=ret;
+      //this.faktura.forma_platnosci="karta";
+      this.fvalidator();
+      console.dir(this.faktura);
+    })
+
+    this.data_sprzedazy_control.valueChanges.subscribe(val => {
+
+      this.faktura.data_sprzedazy=val;
+      this.fvalidator();
+    })
+
+    this.data_platnosci_control.valueChanges.subscribe(val => {
+
+      this.faktura.data_platnosci=val;
+      this.fvalidator();
+    })
+
+    this.statusinput.valueChanges.subscribe(val => {
+
+      this.faktura.status=val;
+      this.fvalidator();
+    })
+
+    this.formainput.valueChanges.subscribe(val => {
+
+      this.faktura.forma_platnosci=val;
+      this.fvalidator();
+    })
+
+
   }
 
 }

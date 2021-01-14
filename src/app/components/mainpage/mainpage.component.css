@@ -1,0 +1,36 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css');
+
+:host{
+    width:100%;
+}
+.section{
+    width:100%;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+.card{
+    width:350px;
+    height:500px;
+    border-radius: 10px;
+    background: #cebebe;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin:0 50px 0 50px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.877);
+    transition-duration: .5s;
+}
+.card i {
+    font-size: 3rem;
+}
+.card:hover{
+    background: rgb(223, 193, 193);
+    box-shadow: inset -20px -20px 60px #a38686, 
+                inset 5px 5px 60px #fdfcfc,
+                0px 0px 10px rgba(0, 0, 0, 0.808);
+}
