@@ -31,6 +31,7 @@ export class FakturaAddComponent implements OnInit {
   sprzedajacy:Kontrahent = {nazwa:"Nasza firma",adres: "Rzeszów 112",NIP: "0000000001"};
 
   produkty: Array<Produkt>;
+  filteredprodukty:Array<Produkt>
   produktyInput:string;
   produktyFaktura: Array<Produkt> = [];
 
@@ -67,11 +68,21 @@ export class FakturaAddComponent implements OnInit {
       
     })
 
+    
+
 
     this.inputListeners();
 
   }
+  //end init
 
+  pobierzProdukty(nip){
+    this.httpService.getAllProdukty(nip).subscribe(ret => {
+      console.dir(ret);
+      this.produkty=ret;
+      this.filteredprodukty=ret;
+    })
+  }
 
   kontrahenciFilter($event){
     if (this.my2Control.value==""){
@@ -115,16 +126,37 @@ export class FakturaAddComponent implements OnInit {
   searchProdukt(){
     //console.log(this.produktyInput);
     if (this.k!=undefined) {
+      /*
       this.httpService.getProduktyByName(this.produktyInput,this.k.NIP).subscribe( (ret) =>{
         this.produkty=ret;
       })
+      */
+      if (this.produktyInput.length>1)
+        this.produktFilter()
+      else{
+        this.pobierzProdukty(this.k.NIP);
+        this.filteredprodukty=this.produkty;
+      }  
     }
     else {
+      /*
       this.httpService.getProduktyByName(this.produktyInput).subscribe( (ret) =>{
         this.produkty=ret;
       })
+      */
+     if (this.produktyInput.length>1)
+        this.produktFilter()
+      else{
+        this.pobierzProdukty("");
+        this.filteredprodukty=this.produkty;
+      }  
     }
       
+  }
+  produktFilter(){
+    //console.log("Filtruje");
+    this.filteredprodukty=this.produkty.filter(p => p.nazwa.toLowerCase().includes(this.produktyInput.toLowerCase()));
+
   }
 
   addProdukt(item: Produkt){

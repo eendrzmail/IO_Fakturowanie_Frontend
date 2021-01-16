@@ -44,8 +44,8 @@
         >
       </mat-form-field>
 
-      <mat-list #produktylist style="height:400px;overflow-y: auto;">
-        <mat-list-item *ngFor="let item of produkty">
+      <mat-list #produktylist style="height:400px;overflow-y: auto;width:360px">
+        <mat-list-item *ngFor="let item of filteredprodukty">
             <button 
               style="min-width:200px"
               mat-button 

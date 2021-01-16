@@ -19,7 +19,8 @@ export class HttpserviceService {
   //local
   localKontrahenciAPI: string = 'https://inz-opr.herokuapp.com/kontrahenci';//'https://5fbe1e625923c90016e6a866.mockapi.io/api/localhontrahenci'
 
-  produktyAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/produkty';
+  //produktyAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/produkty';
+  produktyAPI: string = 'https://radiant-river-64861.herokuapp.com/api/product';
 
   //local
   fakturyAPI='https://inz-opr.herokuapp.com/faktury';
@@ -57,7 +58,29 @@ export class HttpserviceService {
       );
   }
 
+  getAllProdukty(nip:string):Observable<Produkt[]>{
+    return this.http.get<any>(this.produktyAPI+`?nip=${nip}`)
+    .pipe(
+      map(pr => {
+        let ret:Array<Produkt>=new Array<Produkt>();
+        
 
+        for (let p of pr){
+          let temp:Produkt=new Produkt;
+          //console.dir(p);
+          
+          temp.nazwa=p.name;
+          temp.cena_netto=p.price;
+          temp.wartosc_VAT=p.VAT;
+          temp.jednostka="szt"
+          
+          ret.push(temp);
+        }
+
+        return ret;
+      })
+    )
+  }
 
   getProduktyByName(name: string,nip?: string):Observable<Produkt[]>{
     console.log("Podano nip:"+nip);

@@ -24,6 +24,7 @@ export class FakturaEditComponent implements OnInit {
 
   produkty: Array<Produkt>;
   produktyInput:string;
+  filteredProdukty: Array<Produkt>;
 
   faktura: Faktura;
 
@@ -62,15 +63,48 @@ export class FakturaEditComponent implements OnInit {
     })
   }
 
+  pobierzProdukty(nip){
+    this.httpservice.getAllProdukty(nip).subscribe(ret => {
+      console.dir(ret);
+      this.produkty=ret;
+      this.filteredProdukty=ret;
+    })
+  }
 
   searchProdukt(){
     //console.log(this.produktyInput);
-      this.httpservice.getProduktyByName(this.produktyInput,this.faktura.kupujacy.NIP).subscribe( (ret) =>{
+    if (this.faktura.kupujacy.NIP) {
+      /*
+      this.httpService.getProduktyByName(this.produktyInput,this.k.NIP).subscribe( (ret) =>{
         this.produkty=ret;
       })
-
-
+      */
+      if (this.produktyInput.length>1)
+        this.produktFilter()
+      else{
+        this.pobierzProdukty(this.faktura.kupujacy.NIP);
+        this.filteredProdukty=this.produkty;
+      }  
+    }
+    else {
+      /*
+      this.httpService.getProduktyByName(this.produktyInput).subscribe( (ret) =>{
+        this.produkty=ret;
+      })
+      */
+     if (this.produktyInput.length>1)
+        this.produktFilter()
+      else{
+        this.pobierzProdukty(this.faktura.kupujacy.NIP);
+        this.filteredProdukty=this.produkty;
+      }  
+    }
       
+  }
+  produktFilter(){
+    //console.log("Filtruje");
+    this.filteredProdukty=this.produkty.filter(p => p.nazwa.toLowerCase().includes(this.produktyInput.toLowerCase()));
+
   }
 
   removeItem(item:wierszFaktury){
