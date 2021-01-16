@@ -256,7 +256,7 @@ export class FakturaAddComponent implements OnInit {
 
     this.knipcontrol.valueChanges.subscribe(ret => {
       //tu na 10
-      if (ret.length==2) {
+      if (ret.length==10) {
         console.log("wyszukuje po nipie");
         this.getKontrahentByNip(ret);
       }

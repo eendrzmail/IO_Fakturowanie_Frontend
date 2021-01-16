@@ -15,7 +15,7 @@ import { KontrahentToStringPipe } from '../pipes/kontrahent-to-string.pipe';
 export class HttpserviceService {
 
   kontrahenciAPI: string = 'https://5fbe1e625923c90016e6a866.mockapi.io/api/kontrahenci';
-  kontrahenciAPI2: string = "https://5fbe1e625923c90016e6a866.mockapi.io/api/kontrahenci2/"
+  kontrahenciAPI2: string = "http://www.contractorsapi.somee.com/api/kontrahenci/outside"
   //local
   localKontrahenciAPI: string = 'https://inz-opr.herokuapp.com/kontrahenci';//'https://5fbe1e625923c90016e6a866.mockapi.io/api/localhontrahenci'
 
@@ -43,15 +43,15 @@ export class HttpserviceService {
 
   getKontrahenciByNIP(nip: string):Observable<Kontrahent>{
 
-    return this.http.get<any>(this.kontrahenciAPI2+`/${nip}`)
+    return this.http.get<any>(this.kontrahenciAPI2+`/?nip=${nip}`)
       .pipe(
         map(k => {
           let temp:Kontrahent=new Kontrahent;
           console.dir(k);
           // pousuwac 0 potem
-          temp.nazwa=k.Nazwa;
-          temp.NIP=k.NIP;
-          temp.adres=k.Adres;
+          temp.nazwa=k.nazwa;
+          temp.NIP=k.nip;
+          temp.adres=k.adres;
 
           return temp;
         })
