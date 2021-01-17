@@ -89,6 +89,7 @@ export class FakturaAddComponent implements OnInit {
       this.filteredKontrahenci=this.localkontrahenci;
       this.kontrahenci=this.filteredKontrahenci;
     }
+    /*
     else if (this.my2Control.value.length == 1 ) {
       this.httpService.getKontrahenciByName(this.my2Control.value).subscribe(ret => {
         let temp:Kontrahent[]= ret;
@@ -107,6 +108,7 @@ export class FakturaAddComponent implements OnInit {
       })
       
     }
+    */
     else{
       this.filteredKontrahenci=this.kontrahenci.filter(x => x.nazwa.toLowerCase().includes(this.my2Control.value.toLowerCase()));
     }
@@ -253,6 +255,18 @@ export class FakturaAddComponent implements OnInit {
 
 
   inputListeners(){
+
+    this.my2Control.valueChanges.subscribe(ret => {
+      let reg = /[0-9]{10}/g;
+      if (ret.length==10){
+        if (ret.match(reg)){
+          console.log("wyszukuje po nipie");
+          this.getKontrahentByNip(ret);
+          //wyszukaj po nip
+        }
+      }
+        
+    })
 
     this.knipcontrol.valueChanges.subscribe(ret => {
       //tu na 10
